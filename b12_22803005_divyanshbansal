@@ -1,0 +1,51 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVR
+from sklearn.metrics import accuracy_score, precision_score,recall_score,f1_score
+
+
+data=pd.read_csv("sklearn.datasets.fetch_california_housing")
+categoryfeatures=data.select_dtypes(include=['object']).columns
+numericalfeatures=data.select_dtypes(exclude=['object']).columns
+print("CATEGORICAL FEAUTRES ARE",categoryfeatures)
+print("NUMERICAL FEATURES ")
+
+plt.plot(data['bedroom'],data['price'])
+plt.title("NO. OF BEDROOM VS PRICE")
+plt.xlabel("Bedroom")
+plt.ylabel("Price")
+plt.show()
+
+missingvalues=data.isnull().sum()
+print("Number of missing values are ",missingvalues)
+
+for column in data.columns:
+    if data[column].dtype == 'object':
+        data[column].fillna(data[column].mode()[0],inplace=True)
+        
+        
+    else:
+        data[column].fillna(data[column].median())
+        
+print("Number of missing values after filling are ",data.isnull().sum)
+
+X=data[['bedrooms']]
+Y=data['price']
+
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.4,random_state=42)
+lr_model=LinearRegression()
+lr_model.fit(X_train,Y_train)
+lr_modelpredictions=lr_model.predict(X_test)
+print("PERFORMANCE OF LINEAR REGRESSION MODEL",lr_model.score(X_test))
+
+
+svm_model=SVR()
+svm_model.fit(X_train,Y_train)
+svm_predictions=svm_model.predict(X_test)
+
+
+
+
